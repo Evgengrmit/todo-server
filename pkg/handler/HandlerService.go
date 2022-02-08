@@ -1,6 +1,13 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"todo/pkg/service"
+)
+
+func NewHandler(serv *service.Service) *Handler {
+	return &Handler{services: serv}
+}
 
 // AUTH
 
