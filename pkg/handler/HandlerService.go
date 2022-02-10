@@ -2,7 +2,10 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"net/http"
 	"todo/pkg/service"
+	"todo/user"
 )
 
 func NewHandler(serv *service.Service) *Handler {
@@ -12,6 +15,17 @@ func NewHandler(serv *service.Service) *Handler {
 // AUTH
 
 func (h *Handler) SignUp(c *gin.Context) {
+	var input user.User
+	if err := c.BindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	id, err := h.services.Authorization.CreateUser(input)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusCreated, &gin.H{"id": id})
 
 }
 func (h *Handler) SignIn(c *gin.Context) {
@@ -58,4 +72,9 @@ func (h *Handler) UpdateItem(c *gin.Context) {
 }
 func (h *Handler) DeleteItem(c *gin.Context) {
 
+}
+
+func NewErrorResponse(c *gin.Context, statusCode int, message string) {
+	logrus.Error(message)
+	c.AbortWithStatusJSON(statusCode, error{message})
 }
