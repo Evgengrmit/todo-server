@@ -29,7 +29,17 @@ func (h *Handler) SignUp(c *gin.Context) {
 
 }
 func (h *Handler) SignIn(c *gin.Context) {
-
+	var input signInInput
+	if err := c.BindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error()+"jhfshfdkhdshdkdahd")
+		return
+	}
+	token, err := h.services.Authorization.GenerateToken(input.Login, input.Password)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusCreated, &gin.H{"token": token})
 }
 
 // LISTS

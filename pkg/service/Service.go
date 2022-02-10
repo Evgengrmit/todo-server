@@ -3,11 +3,17 @@ package service
 import (
 	"crypto/sha1"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
+	"time"
 	"todo/pkg/repository"
 	"todo/user"
 )
 
-const salt = "zhdieur484hfr584u4eiodhiuahfwieduso"
+const (
+	salt      = "zhdieur484hfr584u4eiodhiuahfwieduso"
+	signedKey = "nx74nfiuyfgd4ju7j8ref74e"
+	tokenTTL  = 12 * time.Hour
+)
 
 func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
@@ -22,6 +28,21 @@ func NewService(repos *repository.Repository) *Service {
 func (s *AuthService) CreateUser(u user.User) (int, error) {
 	u.Password = generatePasswordHash(u.Password)
 	return s.repo.CreateUser(u)
+}
+
+func (s *AuthService) GenerateToken(login, password string) (string, error) {
+	u, err := s.repo.GetUser(login, generatePasswordHash(password))
+	if err != nil {
+		return "", err
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+		&TokenClaims{
+			jwt.StandardClaims{
+				ExpiresAt: time.Now().Add(tokenTTL).Unix(),
+				IssuedAt:  time.Now().Unix()},
+			u.Id,
+		})
+	return token.SignedString([]byte(signedKey))
 }
 
 func generatePasswordHash(password string) string {
