@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"todo/pkg/repository"
+	"todo/todo"
 	"todo/user"
 )
 
@@ -19,16 +19,16 @@ type Authorization interface {
 }
 
 type TodoList interface {
+	Create(userId int, list todo.TodoList) (int, error)
+	GetAllLists(userId int) ([]todo.TodoList, error)
+	GetListById(userId, id int) (todo.TodoList, error)
+	Delete(userId, id int) error
+	Update(userId int, id int, input todo.UpdateListInput) error
 }
 
 type TodoItem interface {
 }
 
-type AuthService struct {
-	repo repository.Authorization
-}
-
-type TokenClaims struct {
-	jwt.StandardClaims
-	UserID int `json:"user_id"`
+type TodoListService struct {
+	repo repository.TodoList
 }

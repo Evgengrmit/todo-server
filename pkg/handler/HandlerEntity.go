@@ -8,6 +8,6 @@ type Handler struct {
 	services *service.Service
 }
 
-type error struct {
+type errorResponse struct {
 	Message string `json:"message"`
 }

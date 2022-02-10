@@ -6,12 +6,6 @@ import (
 	"todo/user"
 )
 
-func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{
-		Authorization: NewAuthPostgres(db),
-	}
-}
-
 func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }

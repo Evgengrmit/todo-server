@@ -16,23 +16,33 @@ const (
 	tokenTTL  = 12 * time.Hour
 )
 
+func NewService(repos *repository.Repository) *Service {
+	return &Service{
+		Authorization: NewAuthService(repos.Authorization),
+		TodoList:      NewTodoListService(repos.TodoList),
+	}
+}
+
+type AuthService struct {
+	repo repository.Authorization
+}
+
+type TokenClaims struct {
+	jwt.StandardClaims
+	UserID int `json:"user_id"`
+}
+
 func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func NewService(repos *repository.Repository) *Service {
-	return &Service{
-		Authorization: NewAuthService(repos.Authorization),
-	}
-}
-
-func (s *AuthService) CreateUser(u user.User) (int, error) {
+func (a *AuthService) CreateUser(u user.User) (int, error) {
 	u.Password = generatePasswordHash(u.Password)
-	return s.repo.CreateUser(u)
+	return a.repo.CreateUser(u)
 }
 
-func (s *AuthService) GenerateToken(login, password string) (string, error) {
-	u, err := s.repo.GetUser(login, generatePasswordHash(password))
+func (a *AuthService) GenerateToken(login, password string) (string, error) {
+	u, err := a.repo.GetUser(login, generatePasswordHash(password))
 	if err != nil {
 		return "", err
 	}
@@ -45,7 +55,7 @@ func (s *AuthService) GenerateToken(login, password string) (string, error) {
 		})
 	return token.SignedString([]byte(signedKey))
 }
-func (s *AuthService) ParseToken(accessToken string) (int, error) {
+func (a *AuthService) ParseToken(accessToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
