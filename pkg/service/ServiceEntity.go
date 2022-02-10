@@ -1,7 +1,6 @@
 package service
 
 import (
-	"todo/pkg/repository"
 	"todo/todo"
 	"todo/user"
 )
@@ -27,8 +26,9 @@ type TodoList interface {
 }
 
 type TodoItem interface {
-}
-
-type TodoListService struct {
-	repo repository.TodoList
+	Create(userId, listId int, list todo.TodoItem) (int, error)
+	GetAllItems(userId, listId int) ([]todo.TodoItem, error)
+	GetItemById(userId, id int) (todo.TodoItem, error)
+	Delete(userId, id int) error
+	//Update(userId, listId, id int, input todo.UpdateListInput) error
 }

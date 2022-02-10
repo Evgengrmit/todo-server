@@ -13,3 +13,7 @@ type getAllListsResponse struct {
 type statusResponse struct {
 	Status string `json:"status"`
 }
+
+type getAllItemResponse struct {
+	Data []todo.TodoItem `json:"data"`
+}

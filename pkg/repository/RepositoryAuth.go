@@ -6,6 +6,10 @@ import (
 	"todo/user"
 )
 
+type AuthPostgres struct {
+	db *sqlx.DB
+}
+
 func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
