@@ -9,7 +9,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign_up", h.SignUp)
 		auth.POST("/sign_in", h.SignIn)
 	}
-	api := router.Group("/api")
+	api := router.Group("/api", h.UserIdentity)
 	{
 		lists := api.Group("/lists")
 		{

@@ -39,13 +39,14 @@ func (h *Handler) SignIn(c *gin.Context) {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusCreated, &gin.H{"token": token})
+	c.JSON(http.StatusAccepted, &gin.H{"token": token})
 }
 
 // LISTS
 
 func (h *Handler) CreateList(c *gin.Context) {
-
+	id, _ := c.Get(userCtx)
+	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 func (h *Handler) GetAllLists(c *gin.Context) {
