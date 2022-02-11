@@ -30,7 +30,7 @@ type TodoItem interface {
 	GetAllItems(userId, listId int) ([]todo.TodoItem, error)
 	GetItemById(userId, id int) (todo.TodoItem, error)
 	Delete(userId, id int) error
-	Update(userId, listId, id int, input todo.UpdateListInput) error
+	Update(userId, id int, input todo.UpdateItemInput) error
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
